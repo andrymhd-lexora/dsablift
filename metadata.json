@@ -1,0 +1,8 @@
+{
+  "name": "Remix DSAB Lift",
+  "description": "DSAB Lift - Elevator \u0026 Vertical Transportation Solutions. Authorized partner of FUJIYANG \u0026 SHARP Elevators in Indonesia. Passenger, Hospital, Freight, Home, Panoramic Elevators, Escalators \u0026 Moving Walks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
