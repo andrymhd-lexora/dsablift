@@ -17,7 +17,9 @@ import {
   Wrench,
   Layers,
   Sun,
-  Moon
+  Moon,
+  FileDown,
+  BookOpen
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -389,6 +391,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
+            {/* E-Katalog Button */}
+            <button
+              onClick={onOpenCatalogModal}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-blue-500/30 hover:border-blue-400 text-blue-300 hover:text-white text-xs font-bold transition-all shadow-sm cursor-pointer group"
+              title={language === 'id' ? 'Download E-Katalog FUJIYANG & SHARP (PDF)' : 'Download Catalogs (PDF)'}
+            >
+              <FileDown className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" />
+              <span>{language === 'id' ? 'E-Katalog' : 'E-Catalog'}</span>
+            </button>
+
             {/* WhatsApp / Quote CTA */}
             <a
               href={`https://wa.me/${COMPANY_INFO.whatsapp}?text=Halo%20DSAB%20Lift,%20saya%20ingin%20meminta%20penawaran%20harga%20lift`}
@@ -553,6 +565,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="flex flex-col gap-2 pt-2 border-t border-slate-800">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenCatalogModal();
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-900 border border-blue-500/40 text-blue-300 hover:text-white hover:bg-slate-800 text-xs font-bold transition-all"
+            >
+              <FileDown className="w-4 h-4 text-blue-400" />
+              <span>{language === 'id' ? 'Download E-Katalog (FUJIYANG & SHARP)' : 'Download Catalogs (FUJIYANG & SHARP)'}</span>
+            </button>
 
             <a
               href={`https://wa.me/${COMPANY_INFO.whatsapp}?text=Halo%20DSAB%20Lift,%20saya%20ingin%20konsultasi%20lift`}

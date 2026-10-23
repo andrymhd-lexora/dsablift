@@ -102,6 +102,13 @@ export const ProjectPortfolio: React.FC<ProjectPortfolioProps> = ({ language }) 
                   alt={project.title[language]}
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src.includes('/assets/images/')) {
+                      target.src = target.src.replace('/assets/images/', '/src/assets/images/');
+                    }
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
@@ -193,6 +200,13 @@ export const ProjectPortfolio: React.FC<ProjectPortfolioProps> = ({ language }) 
                   src={activeProjectModal.image}
                   alt={activeProjectModal.title[language]}
                   className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src.includes('/assets/images/')) {
+                      target.src = target.src.replace('/assets/images/', '/src/assets/images/');
+                    }
+                  }}
                 />
                 <div className="absolute bottom-3 left-3 bg-slate-950/80 px-3 py-1 rounded-md text-xs font-mono text-white border border-slate-700">
                   {activeProjectModal.units}

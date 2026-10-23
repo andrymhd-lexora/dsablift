@@ -153,10 +153,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
                 <button
                   onClick={onOpenCatalogModal}
-                  className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 text-xs font-bold border border-slate-700 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-bold border border-slate-700 hover:border-blue-500/40 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>{language === 'id' ? 'Download E-Katalog Lengkap (PDF)' : 'Download Full Catalog (PDF)'}</span>
+                  <Download className="w-4 h-4 text-blue-400" />
+                  <span>{language === 'id' ? 'Download E-Katalog (FUJIYANG & SHARP)' : 'Download Catalogs (FUJIYANG & SHARP)'}</span>
                 </button>
               </div>
             </div>

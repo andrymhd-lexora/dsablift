@@ -22,6 +22,59 @@ interface ProductCatalogProps {
   onOpenCatalogModal: () => void;
 }
 
+const ProductCardImage: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+}> = ({ src, alt, className }) => {
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  React.useEffect(() => {
+    setCurrentSrc(src);
+    setHasError(false);
+    setLoaded(false);
+  }, [src]);
+
+  const handleError = () => {
+    if (currentSrc.startsWith('/assets/images/')) {
+      setCurrentSrc(currentSrc.replace('/assets/images/', '/src/assets/images/'));
+    } else {
+      setHasError(true);
+    }
+  };
+
+  return (
+    <div className="relative w-full h-full bg-slate-950 overflow-hidden">
+      {!loaded && !hasError && (
+        <div className="absolute inset-0 bg-slate-900/90 animate-pulse flex items-center justify-center">
+          <Layers className="w-7 h-7 text-blue-500/30" />
+        </div>
+      )}
+      {!hasError ? (
+        <img
+          src={currentSrc}
+          alt={alt}
+          className={`${className || ''} ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={handleError}
+        />
+      ) : (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-950 p-6 text-center">
+          <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mb-2">
+            <Layers className="w-6 h-6 text-blue-400" />
+          </div>
+          <span className="text-xs font-bold text-white tracking-wide">{alt}</span>
+          <span className="text-[10px] text-blue-400 font-mono mt-1">FUJIYANG × SHARP</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   language,
   onOpenCatalogModal
@@ -82,10 +135,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onOpenCatalogModal}
-              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-blue-300 border border-blue-500/30 text-xs font-bold transition-all flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-blue-300 border border-blue-500/30 hover:border-blue-400 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>{language === 'id' ? 'Download E-Katalog' : 'Download Catalog'}</span>
+              <span>{language === 'id' ? 'Download E-Katalog (FUJIYANG & SHARP)' : 'Download Catalogs (FUJIYANG & SHARP)'}</span>
             </button>
           </div>
         </div>
@@ -116,16 +169,15 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             >
               {/* Product Image Banner */}
               <div className="relative h-52 w-full overflow-hidden bg-slate-950">
-                <img
+                <ProductCardImage
                   src={product.image}
                   alt={product.name[language]}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 brightness-90 group-hover:brightness-100"
-                  loading="lazy"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 brightness-95 group-hover:brightness-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent pointer-events-none" />
 
                 {/* Model Code & Badge */}
-                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                   <span className="px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md text-[11px] font-mono font-bold text-blue-300 border border-blue-500/30">
                     {product.modelCode}
                   </span>
@@ -137,7 +189,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 </div>
 
                 {/* Brand Logo Watermark */}
-                <div className="absolute bottom-2 right-3 text-[10px] font-black text-slate-400/90 tracking-wider">
+                <div className="absolute bottom-2 right-3 text-[10px] font-black text-slate-400/90 tracking-wider pointer-events-none">
                   FUJIYANG × SHARP
                 </div>
               </div>
@@ -232,14 +284,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             {/* Modal Specs Details */}
             <div className="space-y-6">
               {/* Image banner */}
-              <div className="h-56 rounded-xl overflow-hidden relative">
-                <img
+              <div className="h-56 sm:h-72 rounded-xl overflow-hidden relative">
+                <ProductCardImage
                   src={activeProductModal.image}
                   alt={activeProductModal.name[language]}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-3 text-xs text-slate-200 font-semibold bg-slate-950/80 px-3 py-1 rounded-md border border-slate-700">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-3 text-xs text-slate-200 font-semibold bg-slate-950/80 px-3 py-1 rounded-md border border-slate-700 pointer-events-none">
                   DSAB Lift Authorized Partner: FUJIYANG & SHARP
                 </div>
               </div>
@@ -322,10 +374,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     setActiveProductModal(null);
                     onOpenCatalogModal();
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 text-xs font-bold transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>{language === 'id' ? 'Brosur Lengkap' : 'Full Brochure'}</span>
+                  <span>{language === 'id' ? 'Download E-Katalog (2 Item)' : 'Download Catalogs (2 Items)'}</span>
                 </button>
                 <a
                   href={`https://wa.me/${COMPANY_INFO.whatsapp}?text=Halo%20DSAB%20Lift,%20saya%20ingin%20meminta%20brosur%20dan%20penawaran%20harga%20resmi%20untuk%20${encodeURIComponent(activeProductModal.name[language])}`}

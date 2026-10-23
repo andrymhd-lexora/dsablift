@@ -117,10 +117,30 @@ export const Footer: React.FC<FooterProps> = ({
                   {language === 'id' ? 'Konsultasi & Penawaran Resmi' : 'Consultation & Quotation'}
                 </a>
               </li>
-              <li>
-                <button onClick={onOpenCatalogModal} className="text-indigo-400 hover:underline text-left cursor-pointer">
-                  {language === 'id' ? 'Download E-Katalog Produk PDF' : 'Download E-Catalog PDF'}
+              <li className="pt-1 border-t border-slate-800">
+                <button onClick={onOpenCatalogModal} className="text-blue-400 font-semibold hover:underline text-left cursor-pointer flex items-center gap-1.5">
+                  <span>{language === 'id' ? 'Download E-Katalog (2 Item)' : 'Download Catalogs (2 Items)'}</span>
                 </button>
+              </li>
+              <li>
+                <a
+                  href="/assets/aistudio/KATALOG_DSAB_LIFT_FujiYang_896d5af5.pdf"
+                  download="KATALOG_DSAB_LIFT_FUJIYANG_2026.pdf"
+                  className="hover:text-blue-300 transition-colors flex items-center gap-1 text-[11px]"
+                >
+                  <span className="text-blue-400">↳</span>
+                  <span>E-Katalog FUJIYANG (2.2 MB)</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/assets/aistudio/KATALOG_DSAB_LIFT_SHARP_8ccf8b4c.pdf"
+                  download="KATALOG_DSAB_LIFT_SHARP_2026.pdf"
+                  className="hover:text-red-300 transition-colors flex items-center gap-1 text-[11px]"
+                >
+                  <span className="text-red-400">↳</span>
+                  <span>E-Katalog SHARP (1.8 MB)</span>
+                </a>
               </li>
             </ul>
           </div>

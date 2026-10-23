@@ -172,7 +172,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-semibold text-sm border border-slate-700/80 transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <Download className="w-4 h-4 text-blue-400" />
-                <span>{language === 'id' ? 'Download E-Katalog PDF' : 'Download E-Catalog'}</span>
+                <span>{language === 'id' ? 'Download E-Katalog (FUJIYANG & SHARP)' : 'Download Catalogs (FUJIYANG & SHARP)'}</span>
               </button>
             </div>
           </div>

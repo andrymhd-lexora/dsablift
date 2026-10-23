@@ -26,7 +26,8 @@ import {
   Check,
   FileText,
   Eye,
-  BookOpen
+  BookOpen,
+  Download
 } from 'lucide-react';
 
 interface AboutPageProps {
@@ -44,7 +45,74 @@ export const AboutPage: React.FC<AboutPageProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
+  const [downloadingCatalog, setDownloadingCatalog] = useState<'fujiyang' | 'sharp' | null>(null);
+  const [downloadedCatalog, setDownloadedCatalog] = useState<{ [key: string]: boolean }>({});
+  const [activeDocViewer, setActiveDocViewer] = useState<'compro' | 'fujiyang' | 'sharp'>('compro');
+
   const pdfUrl = '/COMPANY_PROFILE_DSAB_PRIME_2026.pdf';
+
+  const catalogs = {
+    fujiyang: {
+      id: 'fujiyang' as const,
+      name: 'E-Katalog FUJIYANG Elevator & Escalator',
+      brand: 'FUJIYANG (Japan Technology)',
+      badge: 'JAPAN TECH • 27 HALAMAN',
+      url: '/assets/aistudio/KATALOG_DSAB_LIFT_FujiYang_896d5af5.pdf',
+      filename: 'KATALOG_DSAB_LIFT_FUJIYANG_2026.pdf',
+      size: '2.2 MB',
+      pages: '27 Halaman',
+      tagline: language === 'id'
+        ? 'Spesifikasi teknis seri penumpang, villa lift, rumah sakit, kargo, eskalator & dimensi shaft'
+        : 'Technical specs for passenger, villa, hospital bed, cargo lifts & escalators'
+    },
+    sharp: {
+      id: 'sharp' as const,
+      name: 'E-Katalog SHARP Elevators & Escalator',
+      brand: 'SHARP Elevators (Korea & Global Network)',
+      badge: 'KOREA & GLOBAL • 25 HALAMAN',
+      url: '/assets/aistudio/KATALOG_DSAB_LIFT_SHARP_8ccf8b4c.pdf',
+      filename: 'KATALOG_DSAB_LIFT_SHARP_2026.pdf',
+      size: '1.8 MB',
+      pages: '25 Halaman',
+      tagline: language === 'id'
+        ? 'Spesifikasi ekspor 50+ negara: high-rise passenger, heavy-duty eskalator 30°/35°, moving walk & car lift'
+        : 'Global export specs across 50+ countries: passenger, commercial escalators & car lifts'
+    }
+  };
+
+  const handleDownloadCatalog = async (id: 'fujiyang' | 'sharp') => {
+    setDownloadingCatalog(id);
+    const cat = catalogs[id];
+    try {
+      const response = await fetch(cat.url, {
+        headers: { 'Accept': 'application/pdf' }
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const blob = await response.blob();
+      const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+      const objectUrl = window.URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = cat.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(objectUrl), 10000);
+      setDownloadedCatalog(prev => ({ ...prev, [id]: true }));
+      setTimeout(() => setDownloadedCatalog(prev => ({ ...prev, [id]: false })), 4000);
+    } catch {
+      const link = document.createElement('a');
+      link.href = cat.url;
+      link.download = cat.filename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setDownloadingCatalog(null);
+    }
+  };
 
   const handleDownloadPdf = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -141,6 +209,17 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">1.4 MB</span>
             </button>
 
+            {onOpenCatalogModal && (
+              <button
+                onClick={onOpenCatalogModal}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-semibold border border-blue-500/30 transition-all cursor-pointer"
+                title={language === 'id' ? 'Download E-Katalog FUJIYANG & SHARP' : 'Download E-Catalogs'}
+              >
+                <FileText className="w-3.5 h-3.5 text-blue-400" />
+                <span className="hidden sm:inline">{language === 'id' ? 'E-Katalog Lift (2 Item)' : 'E-Catalogs (2 Items)'}</span>
+              </button>
+            )}
+
             <a
               href={pdfUrl}
               target="_blank"
@@ -220,6 +299,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 <BookOpen className="w-4 h-4 text-cyan-400" />
                 <span>{language === 'id' ? 'Baca E-Book Online' : 'Read E-Book Online'}</span>
               </button>
+
+              {onOpenCatalogModal && (
+                <button
+                  onClick={onOpenCatalogModal}
+                  className="px-5 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-blue-300 hover:text-white border border-blue-500/30 hover:border-blue-400 font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                >
+                  <FileText className="w-4 h-4 text-blue-400" />
+                  <span>{language === 'id' ? 'E-Katalog FUJIYANG & SHARP' : 'FUJIYANG & SHARP Catalogs'}</span>
+                </button>
+              )}
 
               <a
                 href={pdfUrl}
@@ -929,41 +1018,157 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
               {/* Partner Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+                {/* FUJIYANG Card */}
+                <div className="p-6 sm:p-7 rounded-2xl bg-slate-950 border border-slate-800 hover:border-blue-500/40 transition-all flex flex-col justify-between shadow-xl">
                   <div>
-                    <div className="mb-4">
+                    <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
                       <FujiyangLogo />
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        JAPAN TECH • 27 HALAMAN
+                      </span>
                     </div>
-                    <h4 className="text-base font-bold text-white mb-2 font-['Space_Grotesk']">
+                    <h4 className="text-base sm:text-lg font-bold text-white mb-2 font-['Space_Grotesk']">
                       FUJIYANG Elevator & Escalator Co., Ltd.
                     </h4>
-                    <p className="text-slate-300 text-xs leading-relaxed">
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                       {language === 'id'
                         ? 'Kerjasama teknologi FUJI Japan dengan basis manufaktur robotik modern, sistem pengujian keselamatan berstandar EN-81 Eropa, dan motor PMSM hemat energi hingga 40%.'
                         : 'FUJI Japan technology cooperation with robotic manufacturing, EN-81 European safety testing, and PMSM motors saving up to 40% energy.'}
                     </p>
+
+                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 space-y-1 mb-4">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span>Brosur Teknis:</span>
+                        <strong className="text-white font-mono">KATALOG FUJIYANG 2026</strong>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span>Ukuran & Halaman:</span>
+                        <strong className="text-emerald-400 font-mono">2.2 MB (27 Hal)</strong>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-blue-400 font-medium">
-                    Standar Mutu: ISO 9001, CE European Safety Standard, Kemenaker RI
+
+                  <div className="pt-4 border-t border-slate-800/80 space-y-2">
+                    <button
+                      onClick={() => handleDownloadCatalog('fujiyang')}
+                      disabled={downloadingCatalog === 'fujiyang'}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    >
+                      {downloadingCatalog === 'fujiyang' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>{language === 'id' ? 'Mengunduh...' : 'Downloading...'}</span>
+                        </>
+                      ) : downloadedCatalog['fujiyang'] ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-300" />
+                          <span>{language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileDown className="w-4 h-4" />
+                          <span>{language === 'id' ? 'Unduh E-Katalog FUJIYANG (2.2 MB)' : 'Download FUJIYANG Catalog (2.2 MB)'}</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="grid grid-cols-2 gap-2 text-center">
+                      <a
+                        href="/assets/aistudio/KATALOG_DSAB_LIFT_FujiYang_896d5af5.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-[11px] font-semibold transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-blue-400" />
+                        <span>{language === 'id' ? 'Buka di Tab Baru' : 'New Tab'}</span>
+                      </a>
+                      {onOpenCatalogModal && (
+                        <button
+                          onClick={onOpenCatalogModal}
+                          className="py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-blue-300 hover:text-white border border-slate-800 text-[11px] font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>{language === 'id' ? 'Kedua Katalog' : 'Both Catalogs'}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+                {/* SHARP Card */}
+                <div className="p-6 sm:p-7 rounded-2xl bg-slate-950 border border-slate-800 hover:border-red-500/40 transition-all flex flex-col justify-between shadow-xl">
                   <div>
-                    <div className="mb-4">
+                    <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
                       <SharpLogo />
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        KOREA & GLOBAL • 25 HALAMAN
+                      </span>
                     </div>
-                    <h4 className="text-base font-bold text-white mb-2 font-['Space_Grotesk']">
+                    <h4 className="text-base sm:text-lg font-bold text-white mb-2 font-['Space_Grotesk']">
                       SHARP Elevators (SHARP Trading Co., Ltd. est. 1989)
                     </h4>
-                    <p className="text-slate-300 text-xs leading-relaxed">
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                       {language === 'id'
                         ? 'Jaringan distribusi global dengan basis produksi China & Sharp Elevators Korea Co., Ltd. Melayani lebih dari 50 negara dengan ragam lift penumpang, rumah, dan eskalator komersial.'
                         : 'Global network with production bases in China & Korea serving 50+ countries with passenger, home, and heavy-duty commercial escalators.'}
                     </p>
+
+                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 space-y-1 mb-4">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span>Brosur Teknis:</span>
+                        <strong className="text-white font-mono">KATALOG SHARP ELEVATORS</strong>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span>Ukuran & Halaman:</span>
+                        <strong className="text-emerald-400 font-mono">1.8 MB (25 Hal)</strong>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-red-400 font-medium">
-                    Eksportir Global: 50+ Negara, Sertifikasi Korea & CE
+
+                  <div className="pt-4 border-t border-slate-800/80 space-y-2">
+                    <button
+                      onClick={() => handleDownloadCatalog('sharp')}
+                      disabled={downloadingCatalog === 'sharp'}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    >
+                      {downloadingCatalog === 'sharp' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>{language === 'id' ? 'Mengunduh...' : 'Downloading...'}</span>
+                        </>
+                      ) : downloadedCatalog['sharp'] ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-300" />
+                          <span>{language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileDown className="w-4 h-4" />
+                          <span>{language === 'id' ? 'Unduh E-Katalog SHARP (1.8 MB)' : 'Download SHARP Catalog (1.8 MB)'}</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="grid grid-cols-2 gap-2 text-center">
+                      <a
+                        href="/assets/aistudio/KATALOG_DSAB_LIFT_SHARP_8ccf8b4c.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-[11px] font-semibold transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{language === 'id' ? 'Buka di Tab Baru' : 'New Tab'}</span>
+                      </a>
+                      {onOpenCatalogModal && (
+                        <button
+                          onClick={onOpenCatalogModal}
+                          className="py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 hover:text-white border border-slate-800 text-[11px] font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>{language === 'id' ? 'Kedua Katalog' : 'Both Catalogs'}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -974,51 +1179,158 @@ export const AboutPage: React.FC<AboutPageProps> = ({
         {/* 5. E-BOOK & PDF DOCUMENT VIEWER TAB */}
         {activeTab === 'document' && (
           <div className="space-y-10 animate-in fade-in duration-300">
-            {/* Header / Document Meta Card */}
+            {/* Document Selection Tabs */}
+            <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl bg-slate-900 border border-slate-800">
+              <button
+                onClick={() => setActiveDocViewer('compro')}
+                className={`flex-1 min-w-[200px] py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
+                  activeDocViewer === 'compro'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-extrabold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Company Profile PT DSAB 2026 (1.4 MB)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveDocViewer('fujiyang')}
+                className={`flex-1 min-w-[200px] py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
+                  activeDocViewer === 'fujiyang'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-extrabold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <FileDown className="w-4 h-4 text-cyan-300" />
+                <span>E-Katalog FUJIYANG (2.2 MB • 27 Hal)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveDocViewer('sharp')}
+                className={`flex-1 min-w-[200px] py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
+                  activeDocViewer === 'sharp'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-extrabold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <FileDown className="w-4 h-4 text-emerald-300" />
+                <span>E-Katalog SHARP (1.8 MB • 25 Hal)</span>
+              </button>
+            </div>
+
+            {/* Header / Active Document Meta Card */}
             <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
                 <div>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{language === 'id' ? 'Dokumen Terverifikasi & Kompatibel' : 'Verified & Compatible Document'}</span>
+                    <span>
+                      {activeDocViewer === 'compro'
+                        ? 'Company Profile Resmi Terverifikasi'
+                        : activeDocViewer === 'fujiyang'
+                        ? 'Brosur Pabrikan FUJI Japan Technology'
+                        : 'Brosur Pabrikan SHARP Elevators Global'}
+                    </span>
                   </div>
+
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-['Space_Grotesk']">
-                    {language === 'id'
-                      ? 'E-Book Company Profile PT DSAB 2026'
-                      : 'PT DSAB Official Company Profile 2026'}
+                    {activeDocViewer === 'compro'
+                      ? (language === 'id' ? 'Company Profile PT DSAB 2026' : 'PT DSAB Official Company Profile 2026')
+                      : activeDocViewer === 'fujiyang'
+                      ? (language === 'id' ? 'E-Katalog FUJIYANG Elevator & Escalator' : 'FUJIYANG Elevator & Escalator Catalog')
+                      : (language === 'id' ? 'E-Katalog SHARP Elevators & Escalator' : 'SHARP Elevators & Escalator Catalog')}
                   </h2>
+
                   <p className="text-slate-400 text-xs sm:text-sm mt-1">
-                    {language === 'id'
-                      ? 'Dokumen resmi 25 halaman lengkap dengan profil korporasi, legalitas K3, teknologi FUJI Japan, portofolio proyek sipil, dan dewan pimpinan.'
-                      : 'Official 25-page PDF with corporate overview, K3 licenses, FUJI Japan technology, project portfolio, and executive board.'}
+                    {activeDocViewer === 'compro'
+                      ? (language === 'id'
+                        ? 'Dokumen resmi 25 halaman lengkap dengan profil korporasi, legalitas K3, teknologi FUJI Japan, portofolio proyek sipil, dan dewan pimpinan.'
+                        : 'Official 25-page PDF with corporate overview, K3 licenses, FUJI Japan technology, project portfolio, and executive board.')
+                      : activeDocViewer === 'fujiyang'
+                      ? (language === 'id'
+                        ? 'Brosur teknis 27 halaman memuat spesifikasi elevator penumpang, villa lift, rumah sakit, kargo, eskalator & denah sipil shaft hoistway.'
+                        : 'Comprehensive 27-page brochure covering passenger, villa, hospital bed, freight elevators, escalators & hoistway layout drawings.')
+                      : (language === 'id'
+                        ? 'Brosur spesifikasi ekspor 25 halaman mencakup seri elevator high-rise, eskalator heavy-duty 30°/35°, moving walk, dan lift mobil (car lift).'
+                        : '25-page global export brochure featuring high-speed passenger lifts, heavy-duty commercial escalators, moving walks & car lifts.')}
                   </p>
                 </div>
 
                 {/* Primary Action Buttons */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={isDownloading}
-                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-75 hover:scale-105"
-                  >
-                    {isDownloading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : downloadSuccess ? (
-                      <Check className="w-4 h-4 text-emerald-300" />
-                    ) : (
-                      <FileDown className="w-4 h-4" />
-                    )}
-                    <span>
-                      {isDownloading
-                        ? (language === 'id' ? 'Mengunduh...' : 'Downloading...')
-                        : downloadSuccess
-                        ? (language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!')
-                        : (language === 'id' ? 'Unduh PDF (1.4 MB)' : 'Download PDF (1.4 MB)')}
-                    </span>
-                  </button>
+                  {activeDocViewer === 'compro' ? (
+                    <button
+                      onClick={handleDownloadPdf}
+                      disabled={isDownloading}
+                      className="px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-75 hover:scale-105"
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : downloadSuccess ? (
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      ) : (
+                        <FileDown className="w-4 h-4" />
+                      )}
+                      <span>
+                        {isDownloading
+                          ? (language === 'id' ? 'Mengunduh...' : 'Downloading...')
+                          : downloadSuccess
+                          ? (language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!')
+                          : (language === 'id' ? 'Unduh PDF (1.4 MB)' : 'Download PDF (1.4 MB)')}
+                      </span>
+                    </button>
+                  ) : activeDocViewer === 'fujiyang' ? (
+                    <button
+                      onClick={() => handleDownloadCatalog('fujiyang')}
+                      disabled={downloadingCatalog === 'fujiyang'}
+                      className="px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-75 hover:scale-105"
+                    >
+                      {downloadingCatalog === 'fujiyang' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : downloadedCatalog['fujiyang'] ? (
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      ) : (
+                        <FileDown className="w-4 h-4" />
+                      )}
+                      <span>
+                        {downloadingCatalog === 'fujiyang'
+                          ? (language === 'id' ? 'Mengunduh...' : 'Downloading...')
+                          : downloadedCatalog['fujiyang']
+                          ? (language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!')
+                          : (language === 'id' ? 'Unduh E-Katalog FUJIYANG (2.2 MB)' : 'Download FUJIYANG Catalog (2.2 MB)')}
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleDownloadCatalog('sharp')}
+                      disabled={downloadingCatalog === 'sharp'}
+                      className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-75 hover:scale-105"
+                    >
+                      {downloadingCatalog === 'sharp' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : downloadedCatalog['sharp'] ? (
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      ) : (
+                        <FileDown className="w-4 h-4" />
+                      )}
+                      <span>
+                        {downloadingCatalog === 'sharp'
+                          ? (language === 'id' ? 'Mengunduh...' : 'Downloading...')
+                          : downloadedCatalog['sharp']
+                          ? (language === 'id' ? '✓ File Terunduh!' : '✓ Downloaded!')
+                          : (language === 'id' ? 'Unduh E-Katalog SHARP (1.8 MB)' : 'Download SHARP Catalog (1.8 MB)')}
+                      </span>
+                    </button>
+                  )}
 
                   <a
-                    href={pdfUrl}
+                    href={
+                      activeDocViewer === 'compro'
+                        ? pdfUrl
+                        : activeDocViewer === 'fujiyang'
+                        ? '/assets/aistudio/KATALOG_DSAB_LIFT_FujiYang_896d5af5.pdf'
+                        : '/assets/aistudio/KATALOG_DSAB_LIFT_SHARP_8ccf8b4c.pdf'
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2"
@@ -1026,6 +1338,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     <ExternalLink className="w-4 h-4 text-blue-400" />
                     <span>{language === 'id' ? 'Buka Layar Penuh' : 'Open Full Screen'}</span>
                   </a>
+
+                  {onOpenCatalogModal && (
+                    <button
+                      onClick={onOpenCatalogModal}
+                      className="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-blue-300 border border-blue-500/30 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>{language === 'id' ? 'Buka Modal Katalog' : 'Catalog Modal'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1037,15 +1359,21 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 </div>
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
                   <span className="text-[11px] text-slate-500 uppercase font-medium block">{language === 'id' ? 'Ukuran Berkas' : 'File Size'}</span>
-                  <span className="text-sm font-bold text-emerald-400 font-['Space_Grotesk']">1.4 MB (Cepat & Ringan)</span>
+                  <span className="text-sm font-bold text-emerald-400 font-['Space_Grotesk']">
+                    {activeDocViewer === 'compro' ? '1.4 MB' : activeDocViewer === 'fujiyang' ? '2.2 MB' : '1.8 MB'}
+                  </span>
                 </div>
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
                   <span className="text-[11px] text-slate-500 uppercase font-medium block">{language === 'id' ? 'Jumlah Halaman' : 'Total Pages'}</span>
-                  <span className="text-sm font-bold text-blue-400 font-['Space_Grotesk']">25 Halaman Full Color</span>
+                  <span className="text-sm font-bold text-blue-400 font-['Space_Grotesk']">
+                    {activeDocViewer === 'compro' ? '25 Halaman' : activeDocViewer === 'fujiyang' ? '27 Halaman' : '25 Halaman'}
+                  </span>
                 </div>
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                  <span className="text-[11px] text-slate-500 uppercase font-medium block">{language === 'id' ? 'Kompatibilitas' : 'Compatibility'}</span>
-                  <span className="text-sm font-bold text-amber-400 font-['Space_Grotesk']">Adobe Reader & All Browsers</span>
+                  <span className="text-[11px] text-slate-500 uppercase font-medium block">{language === 'id' ? 'Standar / Sertifikasi' : 'Standard'}</span>
+                  <span className="text-sm font-bold text-amber-400 font-['Space_Grotesk']">
+                    {activeDocViewer === 'compro' ? 'SBU & Kemenaker RI' : activeDocViewer === 'fujiyang' ? 'EN-81 & ISO 9001' : 'CE & Korea Standard'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1055,7 +1383,23 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <div className="flex items-center justify-between mb-4 px-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
                   <Eye className="w-4 h-4 text-blue-400" />
-                  <span>{language === 'id' ? 'Pratinjau Langsung Dokumen (Interactive PDF Reader)' : 'Live Document Preview (Interactive PDF Reader)'}</span>
+                  <span>
+                    {language === 'id'
+                      ? `Pratinjau Langsung: ${
+                          activeDocViewer === 'compro'
+                            ? 'Company Profile PT DSAB 2026'
+                            : activeDocViewer === 'fujiyang'
+                            ? 'E-Katalog FUJIYANG Elevator & Escalator'
+                            : 'E-Katalog SHARP Elevators & Escalator'
+                        }`
+                      : `Live Preview: ${
+                          activeDocViewer === 'compro'
+                            ? 'PT DSAB Company Profile 2026'
+                            : activeDocViewer === 'fujiyang'
+                            ? 'FUJIYANG Elevator & Escalator'
+                            : 'SHARP Elevators & Escalator'
+                        }`}
+                  </span>
                 </div>
                 <span className="text-[11px] text-slate-500">
                   {language === 'id' ? 'Gunakan tombol di atas viewer untuk zoom atau simpan' : 'Use controls above to zoom or save'}
@@ -1064,39 +1408,108 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
               <div className="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950">
                 <iframe
-                  src={`${pdfUrl}#toolbar=1&navpanes=1`}
+                  src={`${
+                    activeDocViewer === 'compro'
+                      ? pdfUrl
+                      : activeDocViewer === 'fujiyang'
+                      ? '/assets/aistudio/KATALOG_DSAB_LIFT_FujiYang_896d5af5.pdf'
+                      : '/assets/aistudio/KATALOG_DSAB_LIFT_SHARP_8ccf8b4c.pdf'
+                  }#toolbar=1&navpanes=1`}
                   className="w-full h-[650px] sm:h-[850px] border-0"
-                  title="Official Company Profile PT Dunia Sejahtera Akhirat Bahagia 2026"
+                  title="Official Document Reader"
                 />
               </div>
             </div>
 
-            {/* Document Table of Contents Guide */}
+            {/* Document Table of Contents & 3-PDF Downloads Guide */}
             <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-6 sm:p-8">
-              <h3 className="text-lg font-bold text-white mb-4 font-['Space_Grotesk'] flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-blue-400" />
-                <span>{language === 'id' ? 'Daftar Isi & Ringkasan Bab Company Profile' : 'Document Table of Contents & Chapter Overview'}</span>
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                  <span className="text-xs font-bold text-blue-400 font-mono block mb-1">HALAMAN 01 - 04</span>
-                  <h4 className="text-sm font-bold text-white mb-1">Sekilas PT DSAB & Visi Misi</h4>
-                  <p className="text-xs text-slate-400">Pengenalan entitas korporasi, rekam jejak, nilai budaya perusahaan (Amanah, Integritas, Profesionalitas).</p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h3 className="text-lg font-bold text-white font-['Space_Grotesk'] flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-blue-400" />
+                  <span>{language === 'id' ? 'Arsip 3 Dokumen Resmi PT DSAB' : 'Official PT DSAB 3 Document Archive'}</span>
+                </h3>
+                {onOpenCatalogModal && (
+                  <button
+                    onClick={onOpenCatalogModal}
+                    className="px-4 py-2 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-600/30 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer w-fit"
+                  >
+                    <FileDown className="w-4 h-4 text-blue-400" />
+                    <span>{language === 'id' ? 'Unduh Kedua E-Katalog Sekaligus' : 'Download Both Catalogs'}</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Compro card */}
+                <div
+                  onClick={() => setActiveDocViewer('compro')}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                    activeDocViewer === 'compro'
+                      ? 'bg-blue-950/40 border-blue-500/60 ring-1 ring-blue-500'
+                      : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700'
+                  }`}
+                >
+                  <span className="text-xs font-bold text-blue-400 font-mono block mb-1">DOKUMEN UTAMA • 1.4 MB</span>
+                  <h4 className="text-sm font-bold text-white mb-1">Company Profile PT DSAB 2026</h4>
+                  <p className="text-xs text-slate-400 mb-3">Profil korporasi, divisi DSAB Prime & Lift, legalitas SBU/K3, dan struktur pimpinan.</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownloadPdf();
+                    }}
+                    className="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Unduh PDF Compro</span>
+                  </button>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                  <span className="text-xs font-bold text-cyan-400 font-mono block mb-1">HALAMAN 05 - 10</span>
-                  <h4 className="text-sm font-bold text-white mb-1">Divisi DSAB Prime (Konstruksi & Sipil)</h4>
-                  <p className="text-xs text-slate-400">Layanan rancang bangun sipil, gedung bertingkat, struktur baja, mekanikal elektrikal & renovasi komersial.</p>
+
+                {/* FUJIYANG card */}
+                <div
+                  onClick={() => setActiveDocViewer('fujiyang')}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                    activeDocViewer === 'fujiyang'
+                      ? 'bg-blue-950/40 border-blue-500/60 ring-1 ring-blue-500'
+                      : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700'
+                  }`}
+                >
+                  <span className="text-xs font-bold text-cyan-400 font-mono block mb-1">KATALOG RESMI • 2.2 MB</span>
+                  <h4 className="text-sm font-bold text-white mb-1">E-Katalog FUJIYANG (27 Hal)</h4>
+                  <p className="text-xs text-slate-400 mb-3">Japan Technology: passenger, villa, hospital bed, kargo, eskalator & denah shaft sipil.</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownloadCatalog('fujiyang');
+                    }}
+                    className="w-full py-2 px-3 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Unduh PDF FUJIYANG</span>
+                  </button>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                  <span className="text-xs font-bold text-indigo-400 font-mono block mb-1">HALAMAN 11 - 18</span>
-                  <h4 className="text-sm font-bold text-white mb-1">Divisi DSAB Lift (FUJIYANG & SHARP)</h4>
-                  <p className="text-xs text-slate-400">Ragam elevator penumpang, villa lift, rumah sakit, lift kargo, eskalator, serta sertifikasi keselamatan standar Eropa EN-81.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                  <span className="text-xs font-bold text-emerald-400 font-mono block mb-1">HALAMAN 19 - 25</span>
-                  <h4 className="text-sm font-bold text-white mb-1">Legalitas, Struktur Organisasi & Kontak</h4>
-                  <p className="text-xs text-slate-400">Sertifikat SBU, NIB, lisensi Disnaker Kemenaker RI, bagan organisasi lengkap, serta dewan direksi & komisaris.</p>
+
+                {/* SHARP card */}
+                <div
+                  onClick={() => setActiveDocViewer('sharp')}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                    activeDocViewer === 'sharp'
+                      ? 'bg-emerald-950/40 border-emerald-500/60 ring-1 ring-emerald-500'
+                      : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700'
+                  }`}
+                >
+                  <span className="text-xs font-bold text-emerald-400 font-mono block mb-1">KATALOG RESMI • 1.8 MB</span>
+                  <h4 className="text-sm font-bold text-white mb-1">E-Katalog SHARP (25 Hal)</h4>
+                  <p className="text-xs text-slate-400 mb-3">Korea & Global: high-rise lifts, heavy-duty escalators 30°/35°, moving walks & car lifts.</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownloadCatalog('sharp');
+                    }}
+                    className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Unduh PDF SHARP</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1105,10 +1518,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
       </div>
 
-      {/* Prominent Company Profile Download CTA Card */}
+      {/* Prominent Company Profile & E-Katalog Download CTA Card */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
         <div className="rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-slate-900 border border-blue-500/30 p-8 sm:p-12 relative overflow-hidden shadow-2xl">
-          <div className="max-w-2xl relative z-10">
+          <div className="max-w-3xl relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold mb-4">
               <FileDown className="w-3.5 h-3.5" />
               <span>{language === 'id' ? 'DOKUMEN RESMI PT DSAB 2026' : 'OFFICIAL 2026 CORPORATE DOCUMENT'}</span>
@@ -1116,14 +1529,14 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-4 font-['Space_Grotesk']">
               {language === 'id'
-                ? 'Dapatkan Company Profile Lengkap PT DSAB (DSAB Prime & DSAB Lift)'
-                : 'Download Complete PT DSAB Company Profile'}
+                ? 'Dapatkan Company Profile & E-Katalog Lengkap (FUJIYANG & SHARP)'
+                : 'Download Company Profile & Catalogs (FUJIYANG & SHARP)'}
             </h2>
 
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-8">
               {language === 'id'
-                ? 'Unduh dokumen PDF resmi 25 halaman yang memuat portofolio proyek sipil, spesifikasi teknis lift & eskalator FUJIYANG, sertifikat legalitas lengkap, serta struktur dewan pimpinan.'
-                : 'Download the official 25-page PDF document featuring civil projects, FUJIYANG elevator technical specifications, full legal licenses, and executive leadership structure.'}
+                ? 'Unduh dokumen PDF resmi Company Profile (1.4 MB), E-Katalog FUJIYANG Elevator (2.2 MB, 27 halaman), dan E-Katalog SHARP Elevators (1.8 MB, 25 halaman) lengkap dengan portofolio sipil, denah teknis shaft, dan sertifikasi keselamatan internasional.'
+                : 'Download official Company Profile PDF (1.4 MB), FUJIYANG Elevator Catalog (2.2 MB, 27 pages), and SHARP Elevators Catalog (1.8 MB, 25 pages) including civil portfolio, technical shaft drawings, and international certifications.'}
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -1144,9 +1557,19 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     ? (language === 'id' ? 'Mengunduh Dokumen...' : 'Downloading Document...')
                     : downloadSuccess
                     ? (language === 'id' ? '✓ File Berhasil Diunduh' : '✓ Successfully Downloaded')
-                    : (language === 'id' ? 'Unduh Dokumen Company Profile (1.4 MB PDF)' : 'Download Company Profile PDF (1.4 MB)')}
+                    : (language === 'id' ? 'Unduh Company Profile (1.4 MB)' : 'Download Company Profile (1.4 MB)')}
                 </span>
               </button>
+
+              {onOpenCatalogModal && (
+                <button
+                  onClick={onOpenCatalogModal}
+                  className="px-5 py-3.5 rounded-xl bg-gradient-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 text-blue-300 hover:text-white border border-blue-500/40 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-lg hover:scale-105"
+                >
+                  <BookOpen className="w-4 h-4 text-blue-400" />
+                  <span>{language === 'id' ? 'Download E-Katalog (2 Item)' : 'Download Catalogs (2 Items)'}</span>
+                </button>
+              )}
 
               <a
                 href={pdfUrl}
@@ -1155,7 +1578,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 className="px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition-all flex items-center gap-2"
               >
                 <Eye className="w-4 h-4 text-blue-400" />
-                <span>{language === 'id' ? 'Buka di Tab Baru' : 'Open in New Tab'}</span>
+                <span>{language === 'id' ? 'Buka Tab Baru' : 'Open in New Tab'}</span>
               </a>
 
               <button
