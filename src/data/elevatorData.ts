@@ -69,7 +69,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Dirancang untuk memberikan transportasi vertikal yang andal dengan pilihan Machine Roomless (MRL) maupun Small Machine Room (MR). Dilengkapi integrated controller berkecepatan hingga 7.0 m/s dan ragam dekorasi kabin mewah.',
       en: 'Engineered to provide smooth and dependable vertical transit for low-rise to high-rise buildings. Available in Machine-Roomless (MRL) and Small Machine Room (MR) configurations with speeds up to 7.0 m/s.'
     },
-    image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/passenger-elevator.jpg',
     badge: {
       id: 'Best Seller',
       en: 'Best Seller'
@@ -130,7 +130,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Lift panorama FUJIYANG & SHARP menghadirkan pengalaman visual spektakuler bagi penumpang. Menggunakan kaca laminated safety kedap suara dan anti-benturan dengan desain kapsul melingkar, semi-circular, maupun diamond faceted.',
       en: 'Panoramic observation elevators provide a breathtaking sightseeing experience. Engineered with sound-isolating laminated safety glass and futuristic capsule silhouettes.'
     },
-    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/panoramic-elevator.jpg',
     badge: {
       id: 'Arsitektur Mewah',
       en: 'Luxury Architecture'
@@ -190,7 +190,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Dirancang khusus untuk standar fasilitas medis rumah sakit dan klinik. Menyediakan kedalaman kabin yang sesuai untuk brankar/stretcher, pintu bukaan lebar, leveling tanpa hentakan, serta sistem sterilisasi UV-C dan ion negatif.',
       en: 'Specifically built to meet stringent healthcare standards. Features deep stretcher-friendly cabin dimensions, wide door openings, jerk-free gentle leveling, and UV-C sterilization.'
     },
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/hospital-elevator.jpg',
     badge: {
       id: 'Standar Medis Kemenkes',
       en: 'Medical Grade'
@@ -250,7 +250,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Lift barang tangguh untuk mengangkut beban berat, palet forklift, dan mesin pabrik. Dibuat dari pelat baja berkekuatan tinggi dengan pelindung benturan (crash-barrier), guide rail kokoh, dan pintu bukaan maksimal.',
       en: 'Robust freight elevator built to haul heavy equipment, forklift pallets, and factory cargo. Reinforced with high-yield steel plates, crash-barrier protection, and heavy guide rails.'
     },
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/freight-elevator.jpg',
     badge: {
       id: 'Heavy Duty 3000kg+',
       en: 'Heavy Duty'
@@ -310,7 +310,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Lift rumah elegan untuk kenyamanan keluarga dan lansia. Tidak membutuhkan ruang mesin konvensional maupun pit yang dalam, hemat daya listrik (setara AC rumah tangga), beroperasi sangat hening dengan teknologi VVVF micro-processing.',
       en: 'Elegant residential elevator bringing accessibility and prestige to private villas. Requires no machine room or deep pit, consumes low household power, and operates silently.'
     },
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/home-elevator.jpg',
     badge: {
       id: 'Hemat Daya 1 Phasa',
       en: 'Eco Home'
@@ -370,7 +370,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Mengatasi kendala keterbatasan ruang ramp dengan lift mobil bertenaga tinggi. Dilengkapi sistem penyeimbang getaran saat kendaraan masuk, double Car Operating Panels (COP) yang dapat dijangkau pengemudi dari jendela mobil.',
       en: 'Solves spatial ramp constraints with heavy-duty automotive elevators. Features anti-shaking cabin stabilization when cars drive in, double COPs accessible from driver window.'
     },
-    image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/car-elevator.jpg',
     badge: {
       id: 'Solusi Parkir',
       en: 'Parking Solution'
@@ -430,7 +430,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Eskalator modern untuk lalu lintas publik padat seperti mall, stasiun LRT/MRT, dan bandara. Didesain dengan rangka truss baja kokoh, handrail tahan cuaca, step aluminium anti-selip, serta pencahayaan skirt LED mewah.',
       en: 'Heavy-duty public transport escalators engineered for shopping malls, transit stations, and airports. Designed for continuous operation up to 25m travel height.'
     },
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/escalator.jpg',
     badge: {
       id: 'Travel Height 25m',
       en: 'Heavy Duty'
@@ -491,7 +491,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Moving walk menghadirkan kenyamanan transportasi pejalan kaki untuk jarak tempuh panjang dan lantai miring 10°-12°. Sangat ramah untuk pengguna troli belanja hypermarket, koper bandara, dan kursi roda.',
       en: 'Moving walks provide convenient, barrier-free horizontal and inclined (10°-12°) transit for pedestrians, luggage carts, and shopping trolleys across large facilities.'
     },
-    image: 'https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/moving-walk.jpg',
     badge: {
       id: 'Ramah Troli & Koper',
       en: 'Trolley Friendly'
@@ -551,7 +551,7 @@ export const PRODUCTS: ElevatorProduct[] = [
       id: 'Solusi efisien untuk memindahkan makanan, piring, obat-obatan, dan dokumen antar lantai tanpa menyita ruang. Tersedia tipe Window-Loading (setinggi pinggang) dan Ground-Loading (setara lantai untuk troli kecil).',
       en: 'Compact, light-load service elevator requiring minimal architectural space. Features advanced PC control modules for stable movement in window or ground-loading types.'
     },
-    image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/dumbwaiter-elevator.jpg',
     badge: {
       id: 'Kompak & Higienis',
       en: 'Compact & Hygienic'
@@ -1603,7 +1603,7 @@ export const PROJECTS: any[] = [
     units: '5 Unit Lift',
     type: { id: 'Passenger Elevator High-Speed', en: 'High-Speed Passenger Elevator' },
     specs: 'Kapasitas 825 kg • Kecepatan 1.75 m/s • 15 Lantai / Stops',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/passenger-elevator.jpg',
     description: {
       id: 'Supply, instalasi, dan sertifikasi 5 unit lift penumpang berkecepatan tinggi dengan sistem kontrol grup cerdas untuk gedung perbankan pusat.',
       en: 'Turnkey supply, installation, and certification of 5 high-speed passenger elevators with smart group dispatch for corporate banking HQ.'
@@ -1620,7 +1620,7 @@ export const PROJECTS: any[] = [
     units: '3 Unit Lift',
     type: { id: 'Luxury High-Speed MRL', en: 'Luxury High-Speed MRL' },
     specs: 'Kapasitas 1600 kg • Kecepatan 2.0 m/s • 28 Lantai / Stops',
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/passenger-elevator.jpg',
     description: {
       id: 'Instalasi elevator berkecepatan tinggi 2.0 m/s dengan kabin kustom marmer dan kontrol akses kartu RFID untuk penghuni apartemen mewah.',
       en: 'High-speed 2.0 m/s elevators featuring custom marble finishes and RFID access control for high-end luxury residences.'
@@ -1637,7 +1637,7 @@ export const PROJECTS: any[] = [
     units: '15 Unit Lift',
     type: { id: 'Modernisasi & Maintenance 24 Jam', en: 'Modernization & 24/7 Maintenance' },
     specs: '15 Unit Passenger & Service Elevators • 24/7 Hotline Support',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/panoramic-elevator.jpg',
     description: {
       id: 'Kontrak pemeliharaan komprehensif 24/7 dan modernisasi kontroler untuk 15 unit lift hotel bintang lima legendaris di Jakarta.',
       en: 'Full 24/7 preventive maintenance contract and controller modernization across 15 elevator units for iconic 5-star hotel.'
@@ -1654,7 +1654,7 @@ export const PROJECTS: any[] = [
     units: '8 Unit Lift',
     type: { id: 'Hospital Bed & Stretcher Elevator', en: 'Hospital Bed & Stretcher Elevator' },
     specs: 'Kapasitas 1600 kg • Bukaan Pintu Medis • Sterilisasi UV-C',
-    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/hospital-elevator.jpg',
     description: {
       id: 'Penyediaan lift ranjang pasien (bed elevator) higienis dengan presisi leveling milimeter tanpa hentakan dan sistem sterilisasi UV.',
       en: 'Supplying hygienic stretcher bed elevators with millimeter-precise jerk-free leveling and active UV-C air sanitation.'
@@ -1671,7 +1671,7 @@ export const PROJECTS: any[] = [
     units: '2 Unit Lift + Eskalator',
     type: { id: 'Public Transit Heavy-Duty', en: 'Public Transit Heavy-Duty' },
     specs: 'Heavy-Duty 24/7 Outdoor Standard • VVVF Inverter Upgrade',
-    image: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/escalator.jpg',
     description: {
       id: 'Modernisasi sistem mesin dan panel kendali lift pada koridor stasiun LRT Jakarta dengan keandalan operasional cuaca tropis.',
       en: 'Machinery and controller modernization for LRT Jakarta stations with tropical-grade heavy-duty reliability.'
@@ -1688,7 +1688,7 @@ export const PROJECTS: any[] = [
     units: '1 Unit Home Lift',
     type: { id: 'Panoramic Glass Home Lift', en: 'Panoramic Glass Home Lift' },
     specs: 'Kapasitas 400 kg • 4 Lantai • Daya 1.5 kW 220V',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80',
+    image: '/assets/images/home-elevator.jpg',
     description: {
       id: 'Instalasi lift rumah kaca panorama 360 derajat tanpa ruang mesin (MRL) yang terintegrasi dengan desain arsitektur interior modern villa.',
       en: 'Installation of a 360-degree panoramic glass residential elevator with no overhead machine room (MRL) powered by standard 220V.'
